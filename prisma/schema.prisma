@@ -1,0 +1,226 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  LEARNER
+  INSTRUCTOR
+  ADMIN
+  MODERATOR
+}
+
+enum LearningFormat {
+  ONLINE_SELF_PACED
+  ONLINE_LIVE_INTERACTIVE
+  HYBRID_BOOTCAMP
+  RECORDED_WORKSHOP
+}
+
+enum CourseLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  ALL_LEVELS
+}
+
+enum AspectType {
+  POSITIVE
+  NEGATIVE
+}
+
+enum AspectCategory {
+  INSTRUCTOR_QUALITY
+  CURRICULUM_DEPTH
+  PRICING_VALUE
+  COURSE_PACING
+  HANDS_ON_PROJECTS
+  SUPPORT_MENTORSHIP
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  passwordHash  String?
+  role          Role      @default(LEARNER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  reviews       Review[]
+  accounts      Account[]
+  sessions      Session[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model Provider {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  description String?  @db.Text
+  country     String   @default("Bangladesh") // e.g. Bangladesh, United States, UK
+  isNational  Boolean  @default(true)
+  websiteUrl  String
+  logoUrl     String?
+  isVerified  Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  courses     Course[]
+
+  @@index([country])
+  @@map("providers")
+}
+
+model Category {
+  id          String   @id @default(uuid())
+  name        String   // English: "Web Development"
+  nameBn      String   // Bengali: "ওয়েব ডেভেলপমেন্ট"
+  slug        String   @unique
+  icon        String?  // Lucide icon name
+  description String?
+  courses     Course[]
+
+  @@map("categories")
+}
+
+model Course {
+  id              String         @id @default(uuid())
+  title           String         // e.g. "Complete GRE Prep 2026"
+  slug            String         @unique
+  description     String         @db.Text
+  descriptionBn   String?        @db.Text // Optional Bengali summary
+  providerId      String
+  categoryId      String
+  price           Decimal        @db.Decimal(10, 2)
+  currency        String         @default("BDT") // BDT, USD
+  priceInBDT      Decimal        @db.Decimal(10, 2) // Standardized comparison price
+  durationHours   Int            // e.g. 48 hours
+  learningFormat  LearningFormat @default(ONLINE_SELF_PACED)
+  level           CourseLevel    @default(ALL_LEVELS)
+  language        String         @default("English") // "English", "Bengali", "Bilingual"
+  syllabusOverview Json?         // Array of module titles and descriptions
+  outboundUrl     String         // Referral / enrollment URL
+  averageRating   Float          @default(0.0)
+  totalReviews    Int            @default(0)
+  viewCount       Int            @default(0)
+  clickCount      Int            @default(0)
+  tags            String[]       // ["GRE", "Quant", "Verbal", "IELTS", "Programming"]
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  provider        Provider       @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  category        Category       @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  reviews         Review[]
+  outboundClicks  OutboundClickLog[]
+
+  @@index([priceInBDT])
+  @@index([averageRating])
+  @@index([language])
+  @@index([durationHours])
+  @@map("courses")
+}
+
+model Review {
+  id                 String         @id @default(uuid())
+  courseId           String
+  userId             String
+  rating             Int            // 1 to 5 stars
+  title              String?
+  comment            String         @db.Text
+  isVerifiedLearner  Boolean        @default(true)
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  course             Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user               User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  aspects            ReviewAspect[]
+
+  @@index([courseId])
+  @@map("reviews")
+}
+
+model ReviewAspect {
+  id          String         @id @default(uuid())
+  reviewId    String
+  aspectType  AspectType     // POSITIVE or NEGATIVE (FR-12)
+  category    AspectCategory // INSTRUCTOR_QUALITY, PRICING_VALUE, etc.
+  note        String?        // e.g. "Clear explanation of Quant math tricks"
+
+  review      Review         @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@index([reviewId])
+  @@index([aspectType, category])
+  @@map("review_aspects")
+}
+
+model BengaliSynonym {
+  id                  String   @id @default(uuid())
+  bengaliTerm         String   @unique // e.g. "কম্পিউটার প্রোগ্রামিং", "জিআরই", "ওয়েব ডেভেলপমেন্ট"
+  englishEquivalents  String[] // ["computer programming", "coding", "software engineering"]
+  category            String?  // "Technology", "Standardized Testing"
+  phoneticMatches     String[] // ["computer programming", "programme"]
+  createdAt           DateTime @default(now())
+
+  @@index([bengaliTerm])
+  @@map("bengali_synonyms")
+}
+
+model SearchQueryLog {
+  id             String   @id @default(uuid())
+  query          String
+  detectedLang   String   // "bn" or "en"
+  resultsFound   Int
+  filtersApplied Json?
+  createdAt      DateTime @default(now())
+
+  @@map("search_query_logs")
+}
+
+model OutboundClickLog {
+  id        String   @id @default(uuid())
+  courseId  String
+  sourceUrl String?
+  createdAt DateTime @default(now())
+
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@map("outbound_click_logs")
+}

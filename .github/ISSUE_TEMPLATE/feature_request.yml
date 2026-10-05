@@ -1,0 +1,52 @@
+name: "🚀 Feature Request / BRD Proposal"
+description: "Suggest an idea or propose a new feature aligned with the project roadmap"
+title: "[FEAT]: "
+labels: ["enhancement", "feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please provide details on the new feature or enhancement being proposed.
+
+  - type: dropdown
+    id: brd_alignment
+    attributes:
+      label: "Related BRD Section"
+      options:
+        - "FR-01 to FR-03: Filtering Enhancement"
+        - "FR-04 to FR-06: Provider Ingestion & Multi-Region Discovery"
+        - "FR-07 to FR-09: Bengali-English NLP & Translation Search"
+        - "FR-10: Side-by-Side Comparison Engine"
+        - "FR-11 to FR-12: Aspect Sentiment Review Module"
+        - "NFR: Performance & Responsive UI"
+        - "Future Roadmap: AI Recommendations / Mobile App"
+    validations:
+      required: true
+
+  - type: textarea
+    id: user_story
+    attributes:
+      label: "User Story"
+      description: "As a [type of user], I want [action] so that [benefit]."
+      placeholder: "As a university student in Bangladesh, I want to compare GRE coaching courses..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: "Proposed Solution & Design Ideas"
+      description: "Describe the solution you'd like to see implemented."
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: "Acceptance Criteria"
+      description: "How will we know this feature is working as expected?"
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+    validations:
+      required: true

@@ -1,0 +1,24 @@
+# Enterprise CODEOWNERS File
+# Defines individuals or teams that are responsible for code in this repository.
+# GitHub will automatically request review from these owners when a PR touches these paths.
+
+# Default global owner (Lead Developer / Architecture)
+* @Jahid-Munshi
+
+# Frontend & UI/UX components
+/src/components/
+/src/app/courses/
+/src/app/compare/
+/src/styles/
+
+# Backend, Database & Data Ingestion
+/prisma/
+/src/app/api/
+/docker-compose.yml
+
+# Cross-Lingual Search & NLP Module (FR-07 to FR-09)
+/src/lib/search/
+/src/lib/nlp/
+
+# CI/CD Workflows & Repository Governance
+/.github/

@@ -1,0 +1,75 @@
+name: "🐛 Bug Report"
+description: "File a reproducible bug report to help improve Unified Course App"
+title: "[BUG]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for filing a bug report! Please provide as much detailed context as possible.
+
+  - type: dropdown
+    id: module
+    attributes:
+      label: "Affected Module"
+      description: "Which part of the application is affected?"
+      options:
+        - "Course Discovery & Catalog (FR-05)"
+        - "Dynamic Multi-Criteria Filtering (FR-01 to FR-03)"
+        - "Bilingual Bengali-to-English Search (FR-07 to FR-09)"
+        - "Course Comparison Matrix (FR-10)"
+        - "Ratings, Reviews & Aspect Breakdown (FR-11, FR-12)"
+        - "Provider Profiles & Outbound Links"
+        - "User Authentication & Profiles"
+        - "Mobile / Tablet Responsive UI (NFR)"
+        - "Infrastructure & Database"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "Bug Description"
+      description: "A clear and concise description of what the bug is."
+      placeholder: "When filtering by subject and entering a Bengali search query..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: "Steps to Reproduce"
+      description: "Step-by-step instructions to reproduce the behavior."
+      placeholder: |
+        1. Go to '/courses'
+        2. Apply filter 'Price: Under $50'
+        3. Search 'ওয়েব ডেভেলপমেন্ট'
+        4. See unexpected error or empty state
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: "Expected Behavior"
+      description: "What did you expect to happen instead?"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: device
+    attributes:
+      label: "Device & Viewport"
+      options:
+        - "Desktop (1920x1080 / 1440x900)"
+        - "Tablet (iPad / Android Tablet)"
+        - "Mobile (iOS Safari)"
+        - "Mobile (Android Chrome)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Console Logs or Screenshots"
+      description: "Paste browser console output, terminal error logs, or drag-and-drop screenshots here."
