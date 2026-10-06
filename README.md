@@ -51,7 +51,7 @@ Learners in Bangladesh (students, job seekers, and working professionals) face h
 
 | Team Member | Role | Primary Focus Area |
 | :--- | :--- | :--- |
-| **Jahid** | Full-Stack / Lead Developer | Architecture, API routes, database modeling, and comparison engine |
+| **Jahid** | Lead Developer | Architecture, API routes, database modeling, and comparison engine |
 | **Aishwarya** | Frontend Developer | Responsive UI/UX, filter drawer, cross-lingual search UI, and client state |
 | **Saima** | Backend & QA Developer | Course data ingestion pipelines, aspect review engine, testing, and security |
 
